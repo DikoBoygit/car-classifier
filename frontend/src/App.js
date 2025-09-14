@@ -2,7 +2,19 @@
 
 import React, { useState, useRef } from 'react';
 import './App.css';
-import carIcon from './car-icon.png'; // Скачай иконку и положи в папку src
+// import carIcon from './car-icon.png'; // You can add an icon if you want
+
+const Headline = () => (
+  <div className="headline-card">
+    <h1>Нейросетевой анализ повреждений автомобиля</h1>
+  </div>
+);
+
+const Footer = () => (
+  <footer className="app-footer">
+    <p>Copyright © Хериот Краштар</p>
+  </footer>
+);
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -59,7 +71,6 @@ function App() {
     }
   };
 
-  // Позволяет кликать на блок и открывать выбор файла
   const onAreaClick = () => {
     fileInputRef.current.click();
   };
@@ -67,12 +78,14 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <img src={carIcon} alt="Иконка автомобиля" className="header-icon" />
-        <h1>Определение состояния автомобиля</h1>
+        {/* <img src={carIcon} alt="Иконка автомобиля" className="header-icon" /> */}
+        <h2>Определение состояния автомобиля</h2>
         <p>Загрузите фотографию для анализа целостности кузова.</p>
       </header>
 
       <main className="app-main">
+        <Headline />
+
         <div className="card upload-card">
           <input
             type="file"
@@ -85,7 +98,7 @@ function App() {
             {preview ? (
               <img src={preview} alt="Предпросмотр" className="image-preview" />
             ) : (
-              <p>Нажмите здесь или перетащите фото для загрузки</p>
+              <p>Нажмите здесь или перетащите фото</p>
             )}
           </div>
           <button onClick={handleUpload} disabled={isLoading || !selectedFile} className="check-button">
@@ -112,6 +125,8 @@ function App() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }
