@@ -1,0 +1,15 @@
+# Python
+backend/venv/
+__pycache__/
+*.pyc
+
+# Node.js
+frontend/node_modules/
+frontend/build/
+
+# Данные и модели (слишком большие для Git)
+/data/
+/backend/models/
+
+# Системные файлы
+.DS_Store
