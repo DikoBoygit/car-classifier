@@ -50,7 +50,7 @@ cd car-classifier
 ### **3. Загрузка данных для предсказаний**
 
 Модель требует датасет, который не хранится в репозитории.
-1.  **Скачайте архив `data`** по [**этой ссылке**](https://drive.google.com/drive/u/1/folders/1_TpC4axo4z35dF8Acy1mXt_S1xf4A3rZ).
+1.  **Скачайте архив `data`** по [**этой ссылке**]([https://drive.google.com/drive/u/1/folders/1_TpC4axo4z35dF8Acy1mXt_S1xf4A3rZ](https://drive.google.com/drive/folders/1_TpC4axo4z35dF8Acy1mXt_S1xf4A3rZ?usp=sharing)).
 2.  **Распакуйте** его и поместите папку `data` в корень проекта.
 
 ### **4. Настройка Бэкенда**
