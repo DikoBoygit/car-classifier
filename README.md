@@ -54,6 +54,12 @@ cd car-classifier
 1.  **Скачайте архив `data.zip`** по [**этой ссылке**](https://drive.google.com/drive/folders/1_TpC4axo4z35dF8Acy1mXt_S1xf4A3rZ?usp=sharing).
 2.  **Распакуйте** этот архив.
 3.  Поместите получившуюся папку `data` в корень проекта.
+4. Установите best_model.pth и переместите таким образом.
+   backend/
+├── app/
+├── models/
+│   └── best_model.pth  <-- Файл с моделью должен быть здесь
+└── venv/
 
 ### **4. Настройка Бэкенда**
 
