@@ -7,7 +7,7 @@ import os
 
 # --- 1. КОНФИГУРАЦИЯ ---
 # Убедись, что этот путь правильный относительно места запуска uvicorn
-MODEL_PATH = 'models/best_model.pth' 
+MODEL_PATH = 'backend/models/best_model.pth' 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # ВАЖНО: Имена классов должны быть в том же порядке, в котором их нашел PyTorch
