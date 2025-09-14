@@ -1,95 +1,119 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+// frontend/src/App.js
+
+import React, { useState, useRef } from 'react';
 import './App.css';
+import carIcon from './car-icon.png'; // Скачай иконку и положи в папку src
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setPreview(URL.createObjectURL(file));
-      setResult(null);
       setError('');
+      setResult(null);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = async () => {
+  const handleUpload = async () => {
     if (!selectedFile) {
-      setError('Пожалуйста, выберите файл.');
+      setError('Пожалуйста, выберите файл для загрузки.');
       return;
     }
+
+    setIsLoading(true);
+    setError('');
+    setResult(null);
 
     const formData = new FormData();
     formData.append('file', selectedFile);
 
-    setLoading(true);
-    setError('');
-    setResult(null);
-
     try {
-      // Убедись, что URL правильный! Это адрес твоего бэкенд-сервера.
-      const response = await axios.post('http://127.0.0.1:8000/predict', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await fetch('http://127.0.0.1:8000/predict', {
+        method: 'POST',
+        body: formData,
       });
-      setResult(response.data);
+
+      if (!response.ok) {
+        throw new Error('Ошибка сети или сервера. Убедитесь, что бэкенд запущен.');
+      }
+
+      const data = await response.json();
+      setResult(data);
+
     } catch (err) {
-      setError('Произошла ошибка. Убедитесь, что бэкенд-сервер запущен и отвечает.');
-      console.error(err);
+      setError(err.message || 'Произошла ошибка. Убедитесь, что бэкенд-сервер запущен и отвечает.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
+  // Позволяет кликать на блок и открывать выбор файла
+  const onAreaClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
-    <div className="App">
-      <div className="container">
-        <h1>Определение состояния автомобиля 🚗</h1>
+    <div className="app-container">
+      <header className="app-header">
+        <img src={carIcon} alt="Иконка автомобиля" className="header-icon" />
+        <h1>Определение состояния автомобиля</h1>
         <p>Загрузите фотографию для анализа целостности кузова.</p>
-        
-        <div className="uploader-card">
-          <input id="file-upload" type="file" accept="image/*" onChange={handleFileChange} />
-          <button onClick={handleSubmit} disabled={loading || !selectedFile}>
-            {loading ? 'Анализ...' : 'Проверить'}
+      </header>
+
+      <main className="app-main">
+        <div className="card upload-card">
+          <input
+            type="file"
+            onChange={handleFileChange}
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+          />
+          <div className="upload-area" onClick={onAreaClick}>
+            {preview ? (
+              <img src={preview} alt="Предпросмотр" className="image-preview" />
+            ) : (
+              <p>Нажмите здесь или перетащите фото для загрузки</p>
+            )}
+          </div>
+          <button onClick={handleUpload} disabled={isLoading || !selectedFile} className="check-button">
+            {isLoading ? 'Анализ...' : 'Проверить'}
           </button>
         </div>
 
         {error && <p className="error-message">{error}</p>}
 
-        <div className="content-area">
-          {preview && (
-            <div className="card">
-              <h3>Ваше фото:</h3>
-              <img src={preview} alt="Загруженное изображение" />
+        {isLoading && (
+            <div className="card loading-card">
+                <div className="loader"></div>
+                <p>Анализируем ваше фото...</p>
             </div>
-          )}
+        )}
 
-          {result && !result.error && (
-            <div className="card result-card">
-              <h3>Результат анализа:</h3>
-              <p>
-                <strong>Состояние:</strong> 
-                <span className={result.integrity === 'Битый' ? 'damaged' : 'whole'}>
-                  {result.integrity}
-                </span>
-              </p>
-              <p>
-                <strong>Уверенность:</strong> {result.confidence}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+        {result && (
+          <div className="card result-card">
+            <h2>Результат анализа:</h2>
+            <p className={result.integrity === 'Битый' ? 'result-damaged' : 'result-whole'}>
+              Состояние: <strong>{result.integrity}</strong>
+            </p>
+            <p>Уверенность: <strong>{result.confidence}</strong></p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
 
 export default App;
-
